@@ -84,6 +84,7 @@
     <Content Include="Caleb.html" />
     <Content Include="carson.html" />
     <Content Include="Global.asax" />
+    <Content Include="Index.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
