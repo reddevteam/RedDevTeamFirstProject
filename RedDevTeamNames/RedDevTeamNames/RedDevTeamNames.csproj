@@ -86,6 +86,7 @@
     <Content Include="carson.html" />
     <Content Include="Global.asax" />
     <Content Include="Index.html" />
+    <Content Include="swu.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
