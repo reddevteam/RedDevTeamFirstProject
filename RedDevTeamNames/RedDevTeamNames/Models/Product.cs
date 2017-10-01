@@ -7,29 +7,13 @@ namespace RedDevTeamNames.Models
 {
     public class Product
     {
-        public int Id
-        {
-            get { return Id; } 
-            set { Id = value; }
-        }
+        int Id { get; set; }
 
-        public string Name
-        {
-            get { return Name; }
-            set { Name = value; }
-        }
+        string Name { get; set; }
 
-        public string Category
-        {
-            get { return Category; }
-            set { Category = value; }
-        }
+        string Categroy { get; set; }
 
-        public decimal Price
-        {
-            get { return Price; }
-            set { Price = value; }
-        }
+        int Price { get; set; }
     }
 
 }
