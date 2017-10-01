@@ -7,13 +7,12 @@ namespace RedDevTeamNames.Models
 {
     public class Product
     {
-        int Id { get; set; }
+        public int Id { get; set; }
 
-        string Name { get; set; }
+        public string Name { get; set; }
 
-        string Categroy { get; set; }
+        public string Category { get; set; }
 
-        int Price { get; set; }
+        public decimal Price { get; set; }
     }
-
 }
