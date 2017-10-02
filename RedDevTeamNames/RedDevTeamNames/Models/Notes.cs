@@ -5,7 +5,7 @@ using System.Web;
 
 namespace RedDevTeamNames.Models
 {
-    public class Notes
+    public class Note
     {
         public int Id { get; set; }
         public string Subject { get; set; }
