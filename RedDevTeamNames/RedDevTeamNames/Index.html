@@ -2,49 +2,50 @@
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>[Team Red] Product App</title>
+    <title>[Team Red] Note App</title>
 </head>
 <body>
 
     <div>
-        <h2>All Products</h2>
-        <ul id="products" />
+        <h2>All Notes</h2>
+        <ul id="notes" />
     </div>
     <div>
-        <h2>Search by ID</h2>
-        <input type="text" id="prodId" size="5" />
+        <h2>Search by note  ID</h2>
+        <input type="text" id="noteId" size="5" />
         <input type="button" value="Search" onclick="find();" />
-        <p id="product" />
+        <p id="note" />
     </div>
+
 
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
     <script>
-        var uri = 'api/products';
+        var uri = 'api/notes';
 
         $(document).ready(function () {
             // Send an AJAX request
             $.getJSON(uri)
                 .done(function (data) {
-                    // On success, 'data' contains a list of products.
+                    // On success, 'data' contains a list of notes.
                     $.each(data, function (key, item) {
-                        // Add a list item for the product.
-                        $('<li>', { text: formatItem(item) }).appendTo($('#products'));
+                        // Add a list item for the notes.
+                        $('<li>', { text: formatItem(item) }).appendTo($('#notes'));
                     });
                 });
         });
 
         function formatItem(item) {
-            return item.Name + ': $' + item.Price;
+            return item.Subject + ': $' + item.Priority;
         }
 
         function find() {
-            var id = $('#prodId').val();
+            var id = $('#noteId').val();
             $.getJSON(uri + '/' + id)
                 .done(function (data) {
-                    $('#product').text(formatItem(data));
+                    $('#notes').text(formatItem(data));
                 })
                 .fail(function (jqXHR, textStatus, err) {
-                    $('#product').text('Error: ' + err);
+                    $('#note').text('Error: ' + err);
                 });
         }
     </script>
