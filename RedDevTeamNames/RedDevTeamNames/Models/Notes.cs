@@ -7,6 +7,7 @@ namespace RedDevTeamNames.Models
 {
     public class Note
     {
+        [BsonId]
         public int Id { get; set; }
         public string Subject { get; set; }
         public string Details { get; set; }
