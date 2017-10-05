@@ -5,6 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using MongoDB;
+using MongoDB.Driver;
 
 namespace RedDevTeamNames.Controllers
 {
@@ -17,6 +19,7 @@ namespace RedDevTeamNames.Controllers
         //    new Note { Id = 3, Priority = 5, Subject = "Go to work", Details = "Get to work before 9:00 am."}
 
         //};
+        MongoDatabase mongoDatabase;
 
         public IEnumerable<Note> GetAllNotes()
         {
