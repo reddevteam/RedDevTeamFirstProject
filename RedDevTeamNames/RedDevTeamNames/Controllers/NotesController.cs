@@ -1,4 +1,6 @@
-﻿using RedDevTeamNames.Models;
+﻿using MongoDB.Driver;
+using MongoDB.Driver.Builders;
+using RedDevTeamNames.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,8 @@ namespace RedDevTeamNames.Controllers
 {
     public class NotesController : ApiController
     {
+        MongoDatabase mongoDatabase;
+
         //Note[] notes = new Note[]
         //{
         //    new Note { Id = 1, Priority = 3, Subject = "Wake up", Details = "Set alarm of 7:00 am and get out of bed."},
@@ -47,6 +51,45 @@ namespace RedDevTeamNames.Controllers
                 return NotFound();
             }
             return Ok(note);
+        }
+
+        [HttpDelete]
+        public HttpResponseMessage Delete(string id)
+        {
+            bool found = true;
+            string subject = id;
+            try
+            {
+                mongoDatabase = RetrieveMongohqDb();
+                var mongoCollection = mongoDatabase.GetCollection("Notes");
+                var query = Query.EQ("Subject", subject);
+                WriteConcernResult results = mongoCollection.Remove(query);
+
+                if(results.DocumentsAffected < 1)
+                {
+                    found = false;
+                }
+            }
+            catch(Exception ex)
+            {
+                found = false;
+            }
+            HttpResponseMessage response = new HttpResponseMessage();
+            if(!found)
+            {
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
+            }
+            else
+            {
+                response.StatusCode = HttpStatusCode.OK;
+                return response;
+            }
+        }
+
+        private MongoDatabase RetrieveMongohqDb()
+        {
+            throw new NotImplementedException();
         }
     }
 }

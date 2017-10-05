@@ -21,6 +21,16 @@
         function formatItem(item) {
             return item.Subject + ":  " + item.Details + '  P:' + item.Priority;
         }
+        function deleteNote() {
+            var id = $('#noteSubject').val();
+            $.getJSON(uri + '/' + id)
+                .done(function (data) {
+                    $('#response').text('note deleted');
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('#response').text('Error: ' + err);
+                });
+        }
         function find() {
             var id = $('#noteId').val();
             $.getJSON(uri + '/' + id)
@@ -31,6 +41,7 @@
                     $('#note').text('Error: ' + err);
                 });
         }
+
     </script>
 </head>
 
