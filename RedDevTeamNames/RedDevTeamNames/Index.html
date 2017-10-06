@@ -23,7 +23,7 @@
         }
         function deleteNote() {
             var id = $('#noteSubject').val();
-            $.getJSON(uri + '/' + id)
+            $.deleteJSON(uri + '/' + id)
                 .done(function (data) {
                     $('#response').text('note deleted');
                 })
