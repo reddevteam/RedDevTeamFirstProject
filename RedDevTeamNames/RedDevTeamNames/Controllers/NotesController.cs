@@ -26,19 +26,19 @@ namespace RedDevTeamNames.Controllers
         public IEnumerable<Note> GetAllNotes()
         {
             mongoDatabase = RetreiveMongohqDb();
-            List<Note> noteList = newList<Note>();
+            List<Note> noteList = new List<Note>();
             try { var mongoList = mongoDatabase.GetCollection("Notes").FindAll().AsEnumerable();
-                noteList = (from note in mongoListselectnewNote                    
-                            { Id = note["_id"].AsString,                        
+                noteList = (from note in mongoList select new Note                    
+                { Id = note["_id"].AsString,                        
                     Subject = note["Subject"].AsString,                        
                     Details = note["Details"].AsString,                        
                     Priority = note["Priority"].AsInt32                    
-                        }).ToList(); }
+                }).ToList(); }
 
             catch (Exception) {
-                thrownewApplicationException("failed to get data from Mongo");
+                throw new ApplicationException("failed to get data from Mongo");
             }
-            noteList.Sort();
+            //noteList.Sort();
             return noteList;
 
             //return notes;
@@ -108,9 +108,6 @@ namespace RedDevTeamNames.Controllers
                 return response;
             }
         }
-
-        
     }
+}
 
-}
-}
