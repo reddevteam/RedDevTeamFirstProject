@@ -1,14 +1,13 @@
-﻿using MongoDB.Driver;
-using MongoDB.Driver.Builders;
-using RedDevTeamNames.Models;
+﻿using RedDevTeamNames.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using MongoDB;
 using MongoDB.Driver;
+using MongoDB.Driver.Builders;
+using System.Configuration;
 
 namespace RedDevTeamNames.Controllers
 {
@@ -16,14 +15,13 @@ namespace RedDevTeamNames.Controllers
     {
         MongoDatabase mongoDatabase;
 
-        //Note[] notes = new Note[]
-        //{
-        //    new Note { Id = 1, Priority = 3, Subject = "Wake up", Details = "Set alarm of 7:00 am and get out of bed."},
-        //    new Note { Id = 2, Priority = 2, Subject = "Eat breakfast", Details = "Eat a healthy breakfast."},
-        //    new Note { Id = 3, Priority = 5, Subject = "Go to work", Details = "Get to work before 9:00 am."}
-
-        //};
-        MongoDatabase mongoDatabase;
+        private MongoDatabase RetreiveMongohqDb()
+        {
+            MongoUrl myMongoURL = new MongoUrl(ConfigurationManager.ConnectionStrings["MongoHQ"].ConnectionString);
+            MongoClient mongoClient = new MongoClient(myMongoURL);
+            MongoServer server = mongoClient.GetServer();
+            return mongoClient.GetServer().GetDatabase("kurtmd");
+        }
 
         public IEnumerable<Note> GetAllNotes()
         {
@@ -46,9 +44,30 @@ namespace RedDevTeamNames.Controllers
             //return notes;
         }
 
-        public IHttpActionResult GetNote(int id)
+        public IHttpActionResult GetNote(string id)
         {
-            var note = notes.FirstOrDefault((p) => p.Id == id);
+            mongoDatabase = RetreiveMongohqDb();
+
+            List<Note> noteList = new List<Note>();
+            try
+            {
+                var mongoList = mongoDatabase.GetCollection("Notes").FindAll().AsEnumerable();
+                noteList = (from nextNote in mongoList
+                            select new Note
+                            {
+                                Id = nextNote["_id"].AsString,
+                                Subject = nextNote["Subject"].AsString,
+                                Details = nextNote["Details"].AsString,
+                                Priority = nextNote["Priority"].AsInt32,
+                            }).ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+            var note = noteList.FirstOrDefault((p) => p.Subject == id);
             if (note == null)
             {
                 return NotFound();
@@ -63,7 +82,7 @@ namespace RedDevTeamNames.Controllers
             string subject = id;
             try
             {
-                mongoDatabase = RetrieveMongohqDb();
+                mongoDatabase = RetreiveMongohqDb();
                 var mongoCollection = mongoDatabase.GetCollection("Notes");
                 var query = Query.EQ("Subject", subject);
                 WriteConcernResult results = mongoCollection.Remove(query);
@@ -90,9 +109,8 @@ namespace RedDevTeamNames.Controllers
             }
         }
 
-        private MongoDatabase RetrieveMongohqDb()
-        {
-            throw new NotImplementedException();
-        }
+        
     }
+
+}
 }
