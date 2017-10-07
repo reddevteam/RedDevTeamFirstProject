@@ -8,6 +8,21 @@
 
         $(document).ready(function () {
             // Send an AJAX request
+            refreshNoteList();
+            //$.getJSON(uri)
+            //    .done(function (data) {
+            //        // On success, 'data' contains a list of products.
+            //        $.each(data, function (key, item) {
+            //            // Add a list item for the product.
+            //            $('<li>', { text: formatItem(item) }).appendTo($('#notes'));
+            //        });
+            //    });
+        });
+
+        function formatItem(item) {
+            return item.Subject + ":  " + item.Details + '  P:' + item.Priority;
+        }
+        function refreshNoteList() {
             $.getJSON(uri)
                 .done(function (data) {
                     // On success, 'data' contains a list of products.
@@ -16,20 +31,22 @@
                         $('<li>', { text: formatItem(item) }).appendTo($('#notes'));
                     });
                 });
-        });
-
-        function formatItem(item) {
-            return item.Subject + ":  " + item.Details + '  P:' + item.Priority;
         }
+
         function deleteNote() {
-            var id = $('#noteSubject').val();
-            $.deleteJSON(uri + '/' + id)
-                .done(function (data) {
-                    $('#response').text('note deleted');
-                })
-                .fail(function (jqXHR, textStatus, err) {
-                    $('#response').text('Error: ' + err);
-                });
+            var id = $('#deleteNote').val();
+            $.ajax({
+                url: uri + "/" + id,
+                type: "DELETE",
+                contentType: "application/json",
+                success: function () {
+                    ("#notes").empty();                    
+                    refreshNoteList();
+                },
+                error: function () {
+                    document.getElementById("deleteResponse").innerText = "Error: Delete Failed";
+                }
+            });
         }
         function find() {
             var id = $('#noteId').val();
@@ -62,7 +79,8 @@
             feature until our mongo connection is made. -->
         <h2>Delete a note by Subject</h2>
         <input type="text" id="deleteNote" size="5"/>
-        <input type="button" value="Delete" onclick="" />
+        <input type="button" value="Delete" onclick="deleteNote()" />
+        <p id="deleteResponse"></p>
     </div>
     <div>
         <!-- added add feature, not connected to add

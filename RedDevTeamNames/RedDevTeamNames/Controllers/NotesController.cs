@@ -18,8 +18,10 @@ namespace RedDevTeamNames.Controllers
         private MongoDatabase RetreiveMongohqDb()
         {
             MongoUrl myMongoURL = new MongoUrl(ConfigurationManager.ConnectionStrings["MongoHQ"].ConnectionString);
+            //MongoUrl myMongoURL = new MongoUrl(ConfigurationManager.ConnectionStrings["KurtsMongoHQ"].ConnectionString);
             MongoClient mongoClient = new MongoClient(myMongoURL);
             MongoServer server = mongoClient.GetServer();
+            //return mongoClient.GetServer().GetDatabase("kurtmd");
             return mongoClient.GetServer().GetDatabase("reddevteam");
         }
 
@@ -27,15 +29,18 @@ namespace RedDevTeamNames.Controllers
         {
             mongoDatabase = RetreiveMongohqDb();
             List<Note> noteList = new List<Note>();
-            try { var mongoList = mongoDatabase.GetCollection("Notes").FindAll().AsEnumerable();
-                noteList = (from note in mongoList select new Note                    
-                { Id = note["_id"].AsString,                        
-                    Subject = note["Subject"].AsString,                        
-                    Details = note["Details"].AsString,                        
-                    Priority = note["Priority"].AsInt32                    
-                }).ToList(); }
-
-            catch (Exception) {
+            try {
+                var mongoList = mongoDatabase.GetCollection("Notes").FindAll().AsEnumerable();
+                noteList = (from note in mongoList
+                            select new Note                    
+                    {
+                        Id = note["_id"].AsObjectId,                        
+                        Subject = note["Subject"].AsString,                        
+                        Details = note["Details"].AsString,                        
+                        Priority = note["Priority"].AsInt32                    
+                    }).ToList();
+            }
+            catch (Exception ex) {
                 throw new ApplicationException("failed to get data from Mongo");
             }
             //noteList.Sort();
@@ -55,7 +60,7 @@ namespace RedDevTeamNames.Controllers
                 noteList = (from nextNote in mongoList
                             select new Note
                             {
-                                Id = nextNote["_id"].AsString,
+                                Id = nextNote["_id"].AsObjectId,
                                 Subject = nextNote["Subject"].AsString,
                                 Details = nextNote["Details"].AsString,
                                 Priority = nextNote["Priority"].AsInt32,

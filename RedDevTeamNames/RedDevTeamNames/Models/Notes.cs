@@ -9,8 +9,7 @@ namespace RedDevTeamNames.Models
 {
     public class Note
     {
-        [BsonId]
-        public string Id { get; set; }
+        public MongoDB.Bson.BsonObjectId Id { get; set; }
         public string Subject { get; set; }
         public string Details { get; set; }
         public int Priority { get; set; }
