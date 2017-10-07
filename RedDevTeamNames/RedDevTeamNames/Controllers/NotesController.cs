@@ -20,7 +20,7 @@ namespace RedDevTeamNames.Controllers
             MongoUrl myMongoURL = new MongoUrl(ConfigurationManager.ConnectionStrings["MongoHQ"].ConnectionString);
             MongoClient mongoClient = new MongoClient(myMongoURL);
             MongoServer server = mongoClient.GetServer();
-            return mongoClient.GetServer().GetDatabase("kurtmd");
+            return mongoClient.GetServer().GetDatabase("reddevteam");
         }
 
         public IEnumerable<Note> GetAllNotes()
