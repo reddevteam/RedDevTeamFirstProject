@@ -9,14 +9,6 @@
         $(document).ready(function () {
             // Send an AJAX request
             refreshNoteList();
-            //$.getJSON(uri)
-            //    .done(function (data) {
-            //        // On success, 'data' contains a list of products.
-            //        $.each(data, function (key, item) {
-            //            // Add a list item for the product.
-            //            $('<li>', { text: formatItem(item) }).appendTo($('#notes'));
-            //        });
-            //    });
         });
 
         function formatItem(item) {
@@ -34,7 +26,13 @@
                 });
         }
 
+        function clearResponse() {
+            $('#deleteResponse').text("");
+            $('#saveResponse').text("");
+        }
+
         function find() {
+            clearResponse()
             var id = $('#noteId').val();
             $.getJSON(uri + '/' + id)
                 .done(function (data) {
@@ -46,22 +44,25 @@
         }
 
         function deleteNote() {
+            clearResponse()
             var id = $('#deleteNote').val();
             $.ajax({
                 url: uri + "/" + id,
                 type: "DELETE",
                 contentType: "application/json",
                 success: function () {
-                    ("#notes").empty();      
+                    $("#notes").empty();      
                     refreshNoteList();
+                    $('#deleteResponse').text("Success: Note Deleted");
                 },
                 error: function () {
-                    document.getElementById("deleteResponse").innerText = "Error: Delete Failed";
+                    $('#deleteResponse').text("Error: Delete Failed");
                 }
             });
         }
 
         function saveNote() {
+            clearResponse()
             var note = {
                 subject: $('#Subject').val(),
                 details: $('#Details').val(),
@@ -74,11 +75,13 @@
                 contentType: "application/json",
                 data: JSON.stringify(note),
                 success: function (data) {
-                    self.notes.push(data);
+                    //self.notes.push(data);
+                    $("#notes").empty(); 
                     refreshNoteList();
+                    $('#saveResponse').text("Success: Saved Note");
                 },
                 error: function () {
-                    document.getElementById("saveResponse").innerText = "Error: Save Failed";
+                    $('#saveResponse').text("Error: Save Failed");
                 }
             });
         }
