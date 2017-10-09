@@ -20,8 +20,9 @@
         });
 
         function formatItem(item) {
-            return item.Subject + ":  " + item.Details + '  P:' + item.Priority;
+            return item.Priority + ">" + item.Subject + ":  " + item.Details;
         }
+
         function refreshNoteList() {
             $.getJSON(uri)
                 .done(function (data) {
@@ -33,6 +34,17 @@
                 });
         }
 
+        function find() {
+            var id = $('#noteId').val();
+            $.getJSON(uri + '/' + id)
+                .done(function (data) {
+                    $('#note').text(formatItem(data));
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('#note').text('Error: ' + err);
+                });
+        }
+
         function deleteNote() {
             var id = $('#deleteNote').val();
             $.ajax({
@@ -40,7 +52,7 @@
                 type: "DELETE",
                 contentType: "application/json",
                 success: function () {
-                    ("#notes").empty();                    
+                    ("#notes").empty();      
                     refreshNoteList();
                 },
                 error: function () {
@@ -71,18 +83,6 @@
             });
         }
 
-        function find() {
-            var id = $('#noteId').val();
-            $.getJSON(uri + '/' + id)
-                .done(function (data) {
-                    $('#note').text(formatItem(data));
-                })
-                .fail(function (jqXHR, textStatus, err) {
-                    $('#note').text('Error: ' + err);
-                });
-        }
-
-
     </script>
 </head>
 
@@ -92,19 +92,16 @@
         <ul id="notes" />
     </div>
     <div>
-        <h2>Search by note  ID</h2>
+        <h2>Search by note Subject</h2>
         <input type="text" id="noteId" size="5" />
         <input type="button" value="Search" onclick="find();" />
         <p id="note" />
     </div>
-    
     <div>
-        <!-- added delete feature, not connected to delete
-            feature until our mongo connection is made. -->
         <h2>Delete a note by Subject</h2>
         <input type="text" id="deleteNote" size="5"/>
         <input type="button" value="Delete" onclick="deleteNote();" />
-        <p id="deleteResponse"></p>
+        <p id="deleteResponse" />
     </div>
     <div>
         <h2>Add a note</h2>
@@ -112,8 +109,7 @@
         Details:<input type="text" id="Details" size="5" /> <br /><br />
         Priority:<input type="text" id="Priority" size="5" /> <br /><br />
         <input type="button" value="addNote" onclick="saveNote();"/>
-        <p id="saveResponse"></p>
+        <p id="saveResponse" />
     </div>
-
 </body>
 </html>

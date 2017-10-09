@@ -44,7 +44,7 @@ namespace RedDevTeamNames.Controllers
             catch (Exception ex) {
                 throw new ApplicationException("failed to get data from Mongo");
             }
-            //noteList.Sort();
+            noteList.Sort();
             return noteList;
 
             //return notes;
