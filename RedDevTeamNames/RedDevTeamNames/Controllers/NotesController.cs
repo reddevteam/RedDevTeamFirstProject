@@ -8,6 +8,7 @@ using System.Web.Http;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 using System.Configuration;
+using MongoDB.Bson;
 
 namespace RedDevTeamNames.Controllers
 {
@@ -34,7 +35,7 @@ namespace RedDevTeamNames.Controllers
                 noteList = (from note in mongoList
                             select new Note                    
                     {
-                        Id = note["_id"].AsObjectId,                        
+                        Id = note["_id"].AsString,                        
                         Subject = note["Subject"].AsString,                        
                         Details = note["Details"].AsString,                        
                         Priority = note["Priority"].AsInt32                    
@@ -60,7 +61,7 @@ namespace RedDevTeamNames.Controllers
                 noteList = (from nextNote in mongoList
                             select new Note
                             {
-                                Id = nextNote["_id"].AsObjectId,
+                                Id = nextNote["_id"].AsString,
                                 Subject = nextNote["Subject"].AsString,
                                 Details = nextNote["Details"].AsString,
                                 Priority = nextNote["Priority"].AsInt32,
@@ -113,6 +114,40 @@ namespace RedDevTeamNames.Controllers
                 return response;
             }
         }
+
+        [HttpPost]
+        public Note Save(Note newNote)
+        {
+            mongoDatabase = RetreiveMongohqDb();
+            var noteList = mongoDatabase.GetCollection("Notes");
+            WriteConcernResult result;
+            bool hasError = false;
+            if (string.IsNullOrEmpty(newNote.Id))
+            {
+                newNote.Id = ObjectId.GenerateNewId().ToString();
+                result = noteList.Insert<Note>(newNote);
+                hasError = result.HasLastErrorMessage;
+            }
+            else
+            {
+                IMongoQuery query = Query.EQ("_id", newNote.Id);
+                IMongoUpdate update = Update
+                    .Set("Subject", newNote.Subject)
+                    .Set("Details", newNote.Details)
+                    .Set("Priority", newNote.Priority);
+                result = noteList.Update(query, update);
+                hasError = result.HasLastErrorMessage;
+            }
+            if (!hasError)
+            {
+                return newNote;
+            }
+            else
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError);
+            }
+        }
+
     }
 }
 
