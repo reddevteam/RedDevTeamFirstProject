@@ -82,3 +82,7 @@ function saveNote() {
         }
     });
 }
+
+$(document).on('pagebeforeshow', '#delete-page', function () {
+
+});

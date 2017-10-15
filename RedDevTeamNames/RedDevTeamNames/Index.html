@@ -34,13 +34,30 @@
                 </form>
             </div>
             <div>
-                <form action="DeleteItem.html">
-                    <input type="submit" value="Delete Item" data-theme='c'/>
-                </form>
+                <a style="text-decoration:none" data-transition="flip" href="#delete-page" data-theme="c">
+                    <input data-theme="c" type="button" href="#delete-page" value="Delete Note" />
+                </a>
             </div>
         </div>
-        <div data-role="footer" data-theme='d'>
+        <div data-role="footer" data-theme='a'>
             <h1>Team Red Production</h1>
+        </div>
+    </div>
+
+    <!--DELETE PAGE-->
+    <div data-role="page" id="delete-page">
+        <div data-role="header" data-theme='c'>
+            <a href="#pageone" class="ui-btn-left" data-transition="flip" data-theme="c">Back</a>
+            <h1>Notes Mobile APP</h1>
+        </div>
+        <div data-role="content" data-theme="c">
+                <h2>Delete a note by Subject</h2>
+                <input type="text" id="deleteNote" size="5" />
+                <input type="button" value="Delete" onclick="deleteNote();" />
+                <p id="deleteResponse" />
+        </div>
+        <div data-role="footer" data-theme='c'>
+            <h1>&copy; Team Red Production</h1>
         </div>
     </div>
 </body>
