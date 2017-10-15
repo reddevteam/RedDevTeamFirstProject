@@ -29,7 +29,7 @@ function clearResponse() {
 }
 
 function find() {
-   // clearResponse()
+    clearResponse()
     var id = $('#noteId').val();
     $.getJSON(uri + '/' + id)
         .done(function (data) {
