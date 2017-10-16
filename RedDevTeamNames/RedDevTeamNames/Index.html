@@ -20,18 +20,18 @@
         <div data-role="content" data-theme='a'>
             <div>
                 <h2>All Notes</h2>
-                <ul data-role="listview" data-autodividers="true" data-theme="a" id="notes"></ul>
+                <ul data-role="listview" data-autodividers="true" data-theme="a" id="notes" data-filter="true" data-filter-placeholder="Search" data-inset="true"></ul>
             </div>
-            <div>
+            <!--<div>
                 <h2>Search by note Subject</h2>
                 <input type="text" id="noteId" size="5" />
                 <input type="button" value="Search" onclick="find();" />
                 <p id="note" />
-            </div>
+            </div>-->
             <div>
-                <form action="AddItem.html">
-                    <input type="submit" value="Add Item"  data-theme='b'/>
-                </form>
+                <a style="text-decoration:none" data-transition="fade" href="#add-page" data-theme="b">
+                    <input data-theme="b" type="button" href="#add-page" value="Add Note" />
+                </a>
             </div>
             <div>
                 <a style="text-decoration:none" data-transition="flip" href="#delete-page" data-theme="c">
@@ -60,5 +60,27 @@
             <h1>&copy; Team Red Production</h1>
         </div>
     </div>
+
+    <!--ADD PAGE-->
+    <div data-role="page" id="add-page">
+        <div data-role="header" data-theme='c'>
+            <a href="#pageone" class="ui-btn-left" data-transition="fade" data-theme="b">Back</a>
+            <h1>Notes Mobile APP</h1>
+        </div>
+        <div data-role="content" data-theme="b">
+            <div>
+                <h2>Add a note</h2>
+                Subject:<input type="text" id="Subject" size="5" /> <br /><br />
+                Details:<input type="text" id="Details" size="5" /> <br /><br />
+                Priority:<input type="text" id="Priority" size="5" /> <br /><br />
+                <input type="button" value="Add" onclick="saveNote();" />
+                <p id="saveResponse" />
+            </div>
+        </div>
+        <div data-role="footer" data-theme='c'>
+            <h1>&copy; Team Red Production</h1>
+        </div>
+    </div>
+
 </body>
 </html>
