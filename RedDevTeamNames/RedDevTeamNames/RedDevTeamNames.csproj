@@ -99,7 +99,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AddItem.html" />
     <Content Include="css\themes\images\ajax-loader.gif" />
     <Content Include="css\themes\images\icons-png\action-black.png" />
     <Content Include="css\themes\images\icons-png\action-white.png" />
@@ -204,7 +203,6 @@
     <Content Include="css\themes\jquery.mobile.icons.min.css" />
     <Content Include="css\themes\notes-theme.css" />
     <Content Include="css\themes\notes-theme.min.css" />
-    <Content Include="DeleteItem.html" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Index.html" />
