@@ -1,9 +1,9 @@
 ﻿var uri = 'api/notes';
 
-$(document).ready(function () {
-    // Send an AJAX request
-    refreshNoteList();
-});
+//$(document).ready(function () {
+//    // Send an AJAX request
+//    refreshNoteList();
+//});
 
 //function formatItem(item) {
 //    return item.Priority + ">" + item.Subject + ":  " + item.Details;
@@ -21,12 +21,12 @@ function refreshNoteList() {
                 $("#notes").listview("refresh");
             });
         });
-}
+};
 
 function clearResponse() {
     $('#deleteResponse').text("");
     $('#saveResponse').text("");
-}
+};
 
 function find() {
     clearResponse()
@@ -38,7 +38,7 @@ function find() {
         .fail(function (jqXHR, textStatus, err) {
             $('#note').text('Error: ' + err);
         });
-}
+};
 
 function deleteNote() {
     clearResponse()
@@ -57,7 +57,7 @@ function deleteNote() {
             $('#deleteResponse').text("Error: Delete Failed");
         }
     });
-}
+};
 
 function saveNote() {
     clearResponse()
@@ -85,8 +85,37 @@ function saveNote() {
             $('#saveResponse').text("Error: Save Failed");
         }
     });
-}
+};
+
+//Added a page init for the adding the notes to the page
+$(document).on('pageinit', '#pageone', function () {
+    refreshNoteList();
+});
+
+
+
+$(document).on('pagebeforeshow', '#pageone', function () {
+    //changed the onclick event. It used to look like $('a').on("click", function).......
+    $(document).on("click", 'a', function (event) {     
+        var parm = $(this).attr("data-parm");  //Get the para from the attribute in the <a> tag
+        $("#detailParmHere").html(parm); //set the hidden <p> to the parm
+    });
+});
 
 $(document).on('pagebeforeshow', '#delete-page', function () {
 
+});
+
+$(document).on('pagebeforeshow', '#details-page', function () {
+    var textString = 'fix me';
+    var id = $('#detailParmHere').text();
+    $.getJSON(uri)  //get the notes again, 
+        .done(function (data) {
+            $.each(data, function (index, record) {
+                if (id == record.Id) {//then search threw them to find the matching id
+                    textString = "Priority: " + record.Priority + " Subject: " + record.Subject + " Details: " + record.Details;
+                    $('#showdata').text(textString); //display to details page
+                }
+            });
+        });
 });
