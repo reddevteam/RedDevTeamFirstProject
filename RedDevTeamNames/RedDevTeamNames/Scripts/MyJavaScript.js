@@ -51,6 +51,7 @@ function deleteNote() {
             $("#notes").empty();
             refreshNoteList();
             $('#deleteResponse').text("Success: Note Deleted");
+            $("#deleteNote").val('');    
         },
         error: function () {
             $('#deleteResponse').text("Error: Delete Failed");
@@ -76,6 +77,9 @@ function saveNote() {
             $("#notes").empty();
             refreshNoteList();
             $('#saveResponse').text("Success: Saved Note");
+            $("#Subject").val('');
+            $("#Details").val('');    
+            $("#Priority").val('');    
         },
         error: function () {
             $('#saveResponse').text("Error: Save Failed");
