@@ -16,7 +16,7 @@ function refreshNoteList() {
             $.each(data, function (key, item) {
                 // Add a list item for the product.
                 // Change the way to format the string(Sunny)
-                $('#notes').append('<li><a data-transition="pop" data-parm=' + item.Id + ' href="#details-page">' + item.Priority + ' > ' + item.Subject + '</a></li>');
+                $('#notes').append('<li><a data-transition="pop" data-parm=' + item.Id + ' href="#details-page"><div hidden>' + item.Priority + '</div>' + item.Subject + '</a></li>');
                 // Listview refresh after each inner loop(Sunny)
                 $("#notes").listview("refresh");
             });
