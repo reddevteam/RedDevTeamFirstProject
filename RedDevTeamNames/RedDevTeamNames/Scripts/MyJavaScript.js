@@ -107,14 +107,20 @@ $(document).on('pagebeforeshow', '#delete-page', function () {
 });
 
 $(document).on('pagebeforeshow', '#details-page', function () {
-    var textString = 'fix me';
+    var Priority;
+    var Subject;
+    var Details;
     var id = $('#detailParmHere').text();
     $.getJSON(uri)  //get the notes again, 
         .done(function (data) {
             $.each(data, function (index, record) {
                 if (id == record.Id) {//then search threw them to find the matching id
-                    textString = "Priority: " + record.Priority + " Subject: " + record.Subject + " Details: " + record.Details;
-                    $('#showdata').text(textString); //display to details page
+                    Priority = "Priority: " + record.Priority;
+                    Subject = " Subject: " + record.Subject;
+                    Details = " Details: " + record.Details;
+                    $('#showdata').text(Priority).append('<br />');; //display to details page
+                    $('#showdata').append(Subject).append('<br />');;
+                    $('#showdata').append(Details);
                 }
             });
         });
