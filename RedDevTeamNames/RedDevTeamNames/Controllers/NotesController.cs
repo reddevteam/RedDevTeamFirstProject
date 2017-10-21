@@ -14,6 +14,24 @@ namespace RedDevTeamNames.Controllers
 {
     public class NotesController : ApiController
     {
+        //string collectionName = "Notes";  // production
+        string collectionName = "NotesTest";  // testing
+
+        bool testing = false;
+        List<Note> noteList = new List<Note>();
+        // add default controller for normal opperation
+        public NotesController()
+        {
+            testing = false;
+        }
+
+        // add controller that lets you pass in a fake db for testing
+        public NotesController(List<Note> FakeDataList)
+        {
+            noteList = FakeDataList;
+            testing = true;
+        }
+
         MongoDatabase mongoDatabase;
 
         private MongoDatabase RetreiveMongohqDb()
@@ -28,51 +46,54 @@ namespace RedDevTeamNames.Controllers
 
         public IEnumerable<Note> GetAllNotes()
         {
-            mongoDatabase = RetreiveMongohqDb();
-            List<Note> noteList = new List<Note>();
-            try {
-                var mongoList = mongoDatabase.GetCollection("Notes").FindAll().AsEnumerable();
-                noteList = (from note in mongoList
-                            select new Note                    
-                    {
-                        Id = note["_id"].AsString,                        
-                        Subject = note["Subject"].AsString,                        
-                        Details = note["Details"].AsString,                        
-                        Priority = note["Priority"].AsInt32                    
-                    }).ToList();
+            if (!testing)  // if not testing, read data from real db
+            {
+                mongoDatabase = RetreiveMongohqDb();
+                try
+                {
+                    var mongoList = mongoDatabase.GetCollection(collectionName).FindAll().AsEnumerable();
+                    noteList = (from note in mongoList
+                                select new Note
+                                {
+                                    Id = note["_id"].AsString,
+                                    Subject = note["Subject"].AsString,
+                                    Details = note["Details"].AsString,
+                                    Priority = note["Priority"].AsInt32
+                                }).ToList();
+                }
+                catch (Exception)
+                {
+                    throw new ApplicationException("failed to get data from Mongo");
+                }
             }
-            catch (Exception ex) {
-                throw new ApplicationException("failed to get data from Mongo");
-            }
+
             noteList.Sort();
             return noteList;
-
-            //return notes;
         }
 
         public IHttpActionResult GetNote(string id)
         {
-            mongoDatabase = RetreiveMongohqDb();
-
-            List<Note> noteList = new List<Note>();
-            try
+            if (!testing)
             {
-                var mongoList = mongoDatabase.GetCollection("Notes").FindAll().AsEnumerable();
-                noteList = (from nextNote in mongoList
-                            select new Note
-                            {
-                                Id = nextNote["_id"].AsString,
-                                Subject = nextNote["Subject"].AsString,
-                                Details = nextNote["Details"].AsString,
-                                Priority = nextNote["Priority"].AsInt32,
-                            }).ToList();
+                mongoDatabase = RetreiveMongohqDb();
+                
+                try
+                {
+                    var mongoList = mongoDatabase.GetCollection(collectionName).FindAll().AsEnumerable();
+                    noteList = (from nextNote in mongoList
+                                select new Note
+                                {
+                                    Id = nextNote["_id"].AsString,
+                                    Subject = nextNote["Subject"].AsString,
+                                    Details = nextNote["Details"].AsString,
+                                    Priority = nextNote["Priority"].AsInt32,
+                                }).ToList();
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
             }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-
             var note = noteList.FirstOrDefault((p) => p.Subject == id);
             if (note == null)
             {
@@ -80,6 +101,61 @@ namespace RedDevTeamNames.Controllers
             }
             return Ok(note);
         }
+
+        //public IEnumerable<Note> GetAllNotes()
+        //{
+        //    mongoDatabase = RetreiveMongohqDb();
+        //    List<Note> noteList = new List<Note>();
+        //    try {
+        //        var mongoList = mongoDatabase.GetCollection("NotesTest").FindAll().AsEnumerable();
+        //        noteList = (from note in mongoList
+        //                    select new Note                    
+        //            {
+        //                Id = note["_id"].AsString,                        
+        //                Subject = note["Subject"].AsString,                        
+        //                Details = note["Details"].AsString,                        
+        //                Priority = note["Priority"].AsInt32                    
+        //            }).ToList();
+        //    }
+        //    catch (Exception ex) {
+        //        throw new ApplicationException("failed to get data from Mongo");
+        //    }
+        //    noteList.Sort();
+        //    return noteList;
+
+        //    //return notes;
+        //}
+
+        //public IHttpActionResult GetNote(string id)
+        //{
+        //    mongoDatabase = RetreiveMongohqDb();
+
+        //    List<Note> noteList = new List<Note>();
+        //    try
+        //    {
+        //        var mongoList = mongoDatabase.GetCollection("Notes").FindAll().AsEnumerable();
+        //        noteList = (from nextNote in mongoList
+        //                    select new Note
+        //                    {
+        //                        Id = nextNote["_id"].AsString,
+        //                        Subject = nextNote["Subject"].AsString,
+        //                        Details = nextNote["Details"].AsString,
+        //                        Priority = nextNote["Priority"].AsInt32,
+        //                    }).ToList();
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        throw;
+        //    }
+
+        //    var note = noteList.FirstOrDefault((p) => p.Subject == id);
+        //    if (note == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return Ok(note);
+        //}
 
         [HttpDelete]
         public HttpResponseMessage Delete(string id)
