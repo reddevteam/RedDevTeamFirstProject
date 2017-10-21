@@ -51,7 +51,6 @@ namespace RedDevTeamNames.Controllers
             if (!testing)
             {
                 mongoDatabase = RetreiveMongohqDb();
-
                 try
                 {
                     var mongoList = mongoDatabase.GetCollection(collectionName).FindAll().AsEnumerable();
@@ -64,15 +63,15 @@ namespace RedDevTeamNames.Controllers
                                     Priority = note["Priority"].AsInt32
                                 }).ToList();
                 }
+
                 catch (Exception ex)
                 {
                     throw new ApplicationException("failed to get data from Mongo");
                 }
             }
+
             noteList.Sort();
             return noteList;
-
-            //return notes;
         }
 
         public IHttpActionResult GetNote(string id)
@@ -95,11 +94,9 @@ namespace RedDevTeamNames.Controllers
                 }
                 catch (Exception ex)
                 {
-
                     throw;
                 }
             }
-
             var note = noteList.FirstOrDefault((p) => p.Subject == id);
             if (note == null)
             {
@@ -107,6 +104,61 @@ namespace RedDevTeamNames.Controllers
             }
             return Ok(note);
         }
+
+        //public IEnumerable<Note> GetAllNotes()
+        //{
+        //    mongoDatabase = RetreiveMongohqDb();
+        //    List<Note> noteList = new List<Note>();
+        //    try {
+        //        var mongoList = mongoDatabase.GetCollection("NotesTest").FindAll().AsEnumerable();
+        //        noteList = (from note in mongoList
+        //                    select new Note                    
+        //            {
+        //                Id = note["_id"].AsString,                        
+        //                Subject = note["Subject"].AsString,                        
+        //                Details = note["Details"].AsString,                        
+        //                Priority = note["Priority"].AsInt32                    
+        //            }).ToList();
+        //    }
+        //    catch (Exception ex) {
+        //        throw new ApplicationException("failed to get data from Mongo");
+        //    }
+        //    noteList.Sort();
+        //    return noteList;
+
+        //    //return notes;
+        //}
+
+        //public IHttpActionResult GetNote(string id)
+        //{
+        //    mongoDatabase = RetreiveMongohqDb();
+
+        //    List<Note> noteList = new List<Note>();
+        //    try
+        //    {
+        //        var mongoList = mongoDatabase.GetCollection("Notes").FindAll().AsEnumerable();
+        //        noteList = (from nextNote in mongoList
+        //                    select new Note
+        //                    {
+        //                        Id = nextNote["_id"].AsString,
+        //                        Subject = nextNote["Subject"].AsString,
+        //                        Details = nextNote["Details"].AsString,
+        //                        Priority = nextNote["Priority"].AsInt32,
+        //                    }).ToList();
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        throw;
+        //    }
+
+        //    var note = noteList.FirstOrDefault((p) => p.Subject == id);
+        //    if (note == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return Ok(note);
+        //}
 
         [HttpDelete]
         public HttpResponseMessage Delete(string id)
