@@ -14,35 +14,60 @@ namespace RedDevTeamNames.Controllers
 {
     public class NotesController : ApiController
     {
+        //string collectionName = "Notes";  // production
+        string collectionName = "NotesTest";  // testing
+
         MongoDatabase mongoDatabase;
+
+        bool testing = false;
+        List<Note> noteList = new List<Note>();
+
+        public NotesController()
+        {
+            testing = false;
+        }
+
+        public NotesController(List<Note> FakeDataList)
+        {
+            collectionName = "testNotes";
+            noteList = FakeDataList;
+            testing = true;
+        }
+
 
         private MongoDatabase RetreiveMongohqDb()
         {
-            MongoUrl myMongoURL = new MongoUrl(ConfigurationManager.ConnectionStrings["MongoHQ"].ConnectionString);
-            //MongoUrl myMongoURL = new MongoUrl(ConfigurationManager.ConnectionStrings["KurtsMongoHQ"].ConnectionString);
-            MongoClient mongoClient = new MongoClient(myMongoURL);
+            string connectionString = "mongodb://reddevteam:bcuser17@ds062448.mlab.com:62448/reddevteam";
+            //TEST MONGOURL
+            MongoUrl mongoURL = new MongoUrl(connectionString);
+            //MongoUrl myMongoURL = new MongoUrl(ConfigurationManager.ConnectionStrings["MongoHQ"].ConnectionString);
+            MongoClient mongoClient = new MongoClient(mongoURL);
             MongoServer server = mongoClient.GetServer();
-            //return mongoClient.GetServer().GetDatabase("kurtmd");
             return mongoClient.GetServer().GetDatabase("reddevteam");
         }
 
         public IEnumerable<Note> GetAllNotes()
         {
-            mongoDatabase = RetreiveMongohqDb();
-            List<Note> noteList = new List<Note>();
-            try {
-                var mongoList = mongoDatabase.GetCollection("Notes").FindAll().AsEnumerable();
-                noteList = (from note in mongoList
-                            select new Note                    
-                    {
-                        Id = note["_id"].AsString,                        
-                        Subject = note["Subject"].AsString,                        
-                        Details = note["Details"].AsString,                        
-                        Priority = note["Priority"].AsInt32                    
-                    }).ToList();
-            }
-            catch (Exception ex) {
-                throw new ApplicationException("failed to get data from Mongo");
+            if (!testing)
+            {
+                mongoDatabase = RetreiveMongohqDb();
+
+                try
+                {
+                    var mongoList = mongoDatabase.GetCollection(collectionName).FindAll().AsEnumerable();
+                    noteList = (from note in mongoList
+                                select new Note
+                                {
+                                    Id = note["_id"].AsString,
+                                    Subject = note["Subject"].AsString,
+                                    Details = note["Details"].AsString,
+                                    Priority = note["Priority"].AsInt32
+                                }).ToList();
+                }
+                catch (Exception ex)
+                {
+                    throw new ApplicationException("failed to get data from Mongo");
+                }
             }
             noteList.Sort();
             return noteList;
@@ -52,25 +77,27 @@ namespace RedDevTeamNames.Controllers
 
         public IHttpActionResult GetNote(string id)
         {
-            mongoDatabase = RetreiveMongohqDb();
-
-            List<Note> noteList = new List<Note>();
-            try
+            if (!testing)
             {
-                var mongoList = mongoDatabase.GetCollection("Notes").FindAll().AsEnumerable();
-                noteList = (from nextNote in mongoList
-                            select new Note
-                            {
-                                Id = nextNote["_id"].AsString,
-                                Subject = nextNote["Subject"].AsString,
-                                Details = nextNote["Details"].AsString,
-                                Priority = nextNote["Priority"].AsInt32,
-                            }).ToList();
-            }
-            catch (Exception ex)
-            {
+                mongoDatabase = RetreiveMongohqDb();
 
-                throw;
+                try
+                {
+                    var mongoList = mongoDatabase.GetCollection(collectionName).FindAll().AsEnumerable();
+                    noteList = (from nextNote in mongoList
+                                select new Note
+                                {
+                                    Id = nextNote["_id"].AsString,
+                                    Subject = nextNote["Subject"].AsString,
+                                    Details = nextNote["Details"].AsString,
+                                    Priority = nextNote["Priority"].AsInt32,
+                                }).ToList();
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
             }
 
             var note = noteList.FirstOrDefault((p) => p.Subject == id);
@@ -89,7 +116,7 @@ namespace RedDevTeamNames.Controllers
             try
             {
                 mongoDatabase = RetreiveMongohqDb();
-                var mongoCollection = mongoDatabase.GetCollection("Notes");
+                var mongoCollection = mongoDatabase.GetCollection(collectionName);
                 var query = Query.EQ("Subject", subject);
                 WriteConcernResult results = mongoCollection.Remove(query);
 
@@ -119,7 +146,7 @@ namespace RedDevTeamNames.Controllers
         public Note Save(Note newNote)
         {
             mongoDatabase = RetreiveMongohqDb();
-            var noteList = mongoDatabase.GetCollection("Notes");
+            var noteList = mongoDatabase.GetCollection(collectionName);
             WriteConcernResult result;
             bool hasError = false;
             if (string.IsNullOrEmpty(newNote.Id))
