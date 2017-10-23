@@ -80,11 +80,21 @@ namespace RedDevTeamNames.Tests
         }
 
         [TestMethod]
-        // first test local logic, using fake data
         public void GetFakeNotes_ShouldReturnNotFoundIfBroken()
         {
             List<Note> testNotes = GenerateFakeDataList();
             var controller = new NotesController(testNotes); // use 1 of 2 constructors
+
+            IHttpActionResult result = controller.GetNote("Test5");
+
+            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+        }
+
+        [TestMethod]
+        public void GetMongoNotes_ShouldReturnNotFoundIfBroken()
+        {
+            List<Note> testNotes = GenerateFakeDataList();
+            var controller = new NotesController(); // use 2 of 2 constructor
 
             IHttpActionResult result = controller.GetNote("Test5");
 
