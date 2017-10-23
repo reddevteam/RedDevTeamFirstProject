@@ -78,5 +78,17 @@ namespace RedDevTeamNames.Tests
             Assert.AreEqual(testNotes[2].Subject, contentResult.Content.Subject);
 
         }
+
+        [TestMethod]
+        // first test local logic, using fake data
+        public void GetFakeNotes_ShouldReturnNotFoundIfBroken()
+        {
+            List<Note> testNotes = GenerateFakeDataList();
+            var controller = new NotesController(testNotes); // use 1 of 2 constructors
+
+            IHttpActionResult result = controller.GetNote("Test5");
+
+            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+        }
     }
 }
