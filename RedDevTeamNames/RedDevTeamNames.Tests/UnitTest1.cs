@@ -5,6 +5,8 @@ using RedDevTeamNames.Models;
 using RedDevTeamNames.Controllers;
 using System.Web.Http;
 using System.Web.Http.Results;
+using System.Net.Http;
+using System.Net;
 
 namespace RedDevTeamNames.Tests
 {
@@ -64,7 +66,19 @@ namespace RedDevTeamNames.Tests
             Assert.AreEqual(testNotes[2].Subject, contentResult.Content.Subject);
 
         }
+        //=======================================================================
+        [TestMethod]
+        //test delete return ok
+        public void DeleteRetunsOk()
+        {
+            var controller = new NotesController();
 
+            var testNote = "Test2";
+            var response = controller.Delete(testNote);
+
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+        }
+        //=======================================================================
         [TestMethod]
         // now test against test data in mongo
         public void GetMongoNote_ShouldReturnParticularNote()
