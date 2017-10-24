@@ -135,5 +135,37 @@ namespace RedDevTeamNames.Tests
 
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
+        //=======================================================================
+        [TestMethod]
+        public void FakeData_AddNewNote_Success()
+        {
+            List<Note> testNotes = GenerateFakeDataList();
+            string subjectToDelete = "Test Subject";
+            Note noteToAdd = new Note();
+            noteToAdd.Details = "Test Details";
+            noteToAdd.Priority = 2;
+            noteToAdd.Subject = subjectToDelete;
+            var controller = new NotesController(testNotes);
+
+            Note result = controller.Save(noteToAdd);
+
+            Assert.AreEqual(noteToAdd, result);
+        }
+        //=======================================================================
+        [TestMethod]
+        public void MongoData_AddNewNote_Success()
+        {
+            string subjectToDelete = "Test Subject";
+            Note noteToAdd = new Note();
+            noteToAdd.Details = "Test Details";
+            noteToAdd.Priority = 2;
+            noteToAdd.Subject = subjectToDelete;
+            var controller = new NotesController();
+
+            Note result = controller.Save(noteToAdd);
+            controller.Delete(subjectToDelete);
+
+            Assert.AreEqual(noteToAdd, result);
+        }
     }
 }

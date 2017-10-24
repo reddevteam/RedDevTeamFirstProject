@@ -228,33 +228,49 @@ namespace RedDevTeamNames.Controllers
         [HttpPost]
         public Note Save(Note newNote)
         {
-            mongoDatabase = RetreiveMongohqDb();
-            var noteList = mongoDatabase.GetCollection(collectionName);
-            WriteConcernResult result;
-            bool hasError = false;
-            if (string.IsNullOrEmpty(newNote.Id))
+            if (!testing)
             {
-                newNote.Id = ObjectId.GenerateNewId().ToString();
-                result = noteList.Insert<Note>(newNote);
-                hasError = result.HasLastErrorMessage;
+                mongoDatabase = RetreiveMongohqDb();
+                var noteList = mongoDatabase.GetCollection(collectionName);
+                WriteConcernResult result;
+                bool hasError = false;
+                if (string.IsNullOrEmpty(newNote.Id))
+                {
+                    newNote.Id = ObjectId.GenerateNewId().ToString();
+                    result = noteList.Insert<Note>(newNote);
+                    hasError = result.HasLastErrorMessage;
+                }
+                else
+                {
+                    IMongoQuery query = Query.EQ("_id", newNote.Id);
+                    IMongoUpdate update = Update
+                        .Set("Subject", newNote.Subject)
+                        .Set("Details", newNote.Details)
+                        .Set("Priority", newNote.Priority);
+                    result = noteList.Update(query, update);
+                    hasError = result.HasLastErrorMessage;
+                }
+                if (!hasError)
+                {
+                    return newNote;
+                }
+                else
+                {
+                    throw new HttpResponseException(HttpStatusCode.InternalServerError);
+                }
             }
             else
             {
-                IMongoQuery query = Query.EQ("_id", newNote.Id);
-                IMongoUpdate update = Update
-                    .Set("Subject", newNote.Subject)
-                    .Set("Details", newNote.Details)
-                    .Set("Priority", newNote.Priority);
-                result = noteList.Update(query, update);
-                hasError = result.HasLastErrorMessage;
-            }
-            if (!hasError)
-            {
+                try
+                {
+                    noteList.Add(newNote);
+                }
+                catch
+                {
+                    Note emptyNote = new Note();
+                    return emptyNote;
+                }
                 return newNote;
-            }
-            else
-            {
-                throw new HttpResponseException(HttpStatusCode.InternalServerError);
             }
         }
 
