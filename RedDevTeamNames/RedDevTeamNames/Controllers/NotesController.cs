@@ -165,32 +165,63 @@ namespace RedDevTeamNames.Controllers
         {
             bool found = true;
             string subject = id;
-            try
+            if (!testing)
             {
-                mongoDatabase = RetreiveMongohqDb();
-                var mongoCollection = mongoDatabase.GetCollection(collectionName);
-                var query = Query.EQ("Subject", subject);
-                WriteConcernResult results = mongoCollection.Remove(query);
+                try
+                {
+                    mongoDatabase = RetreiveMongohqDb();
+                    var mongoCollection = mongoDatabase.GetCollection(collectionName);
+                    var query = Query.EQ("Subject", subject);
+                    WriteConcernResult results = mongoCollection.Remove(query);
 
-                if(results.DocumentsAffected < 1)
+                    if (results.DocumentsAffected < 1)
+                    {
+                        found = false;
+                    }
+                }
+                catch (Exception ex)
                 {
                     found = false;
                 }
-            }
-            catch(Exception ex)
+                HttpResponseMessage response = new HttpResponseMessage();
+                if (!found)
+                {
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    return response;
+                }
+                else
+                {
+                    response.StatusCode = HttpStatusCode.OK;
+                    return response;
+                }
+            } else
             {
-                found = false;
-            }
-            HttpResponseMessage response = new HttpResponseMessage();
-            if(!found)
-            {
-                response.StatusCode = HttpStatusCode.BadRequest;
-                return response;
-            }
-            else
-            {
-                response.StatusCode = HttpStatusCode.OK;
-                return response;
+                int noteCount = noteList.Count;
+                try
+                {
+                    noteList.RemoveAll(a => a.Subject == id);
+                    if(noteCount < noteList.Count )
+                    {
+                        found = false;
+                    }
+                }
+                catch
+                {
+                    found = false;
+                }
+                HttpResponseMessage response = new HttpResponseMessage();
+                if (!found)
+                {
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    return response;
+                }
+                else
+                {
+                    response.StatusCode = HttpStatusCode.OK;
+                    return response;
+                }
+
+
             }
         }
 

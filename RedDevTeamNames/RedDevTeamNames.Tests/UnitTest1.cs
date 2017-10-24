@@ -68,12 +68,33 @@ namespace RedDevTeamNames.Tests
         }
         //=======================================================================
         [TestMethod]
-        //test delete return ok
-        public void DeleteRetunsOk()
+        //test mongo delete return ok
+        public void DeleteRetunsOk_Mongo()
         {
+            Note noteToBeReSaved = new Note();
+            string testNote = "Test2";
+            noteToBeReSaved.Details = testNote + " Details";
+            noteToBeReSaved.Priority = 2;
+            noteToBeReSaved.Subject = testNote;
             var controller = new NotesController();
 
-            var testNote = "Test2";
+
+            var response = controller.Delete(testNote);
+            //add deleted test note back to the DB to prevent other tests from failing.
+            controller.Save(noteToBeReSaved);
+
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+        }
+        //=======================================================================
+        [TestMethod]
+        //test fake delete return ok
+        public void DeleteRetunsOk_Fake()
+        {
+            List<Note> testNotes = GenerateFakeDataList();
+            string testNote = "Test2";
+            var controller = new NotesController(testNotes);
+
+
             var response = controller.Delete(testNote);
 
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
